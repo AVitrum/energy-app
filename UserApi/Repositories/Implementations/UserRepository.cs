@@ -1,16 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using UserApi.Configs;
 using UserApi.Models;
+using UserApi.Repositories.Interfaces;
 
-namespace UserApi.Repositories;
+namespace UserApi.Repositories.Implementations;
 
-public class UserRepository(AppDbContext dbContext) : RepositoryBase<User>(dbContext)
+public class UserRepository(AppDbContext dbContext) : Repository<User>(dbContext), IUserRepository
 {
     private readonly AppDbContext _dbContext = dbContext;
 
-    public Task<bool> UserExistsByUsernameAsync(string username)
+    public async Task<bool> UserExistsByUsernameAsync(string username)
     {
-        return _dbContext.Users.AnyAsync(u => u.Username == username);
+        return await _dbContext.Users.AnyAsync(u => u.Username == username);
     }
     
     public async Task<User> GetByUsernameAsync(string username)

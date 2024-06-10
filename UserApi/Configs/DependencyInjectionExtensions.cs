@@ -1,8 +1,10 @@
 using System.Text;
 using UserApi.Repositories;
 using Microsoft.IdentityModel.Tokens;
-using UserApi.Services.UserService;
-using UserService = UserApi.Services.UserService.UserService;
+using UserApi.Repositories.Implementations;
+using UserApi.Repositories.Interfaces;
+using UserApi.Services.Interfaces;
+using UserService = UserApi.Services.Implementations.UserService.UserService;
 
 namespace UserApi.Configs;
 
@@ -25,7 +27,9 @@ public static class DependencyInjectionExtensions
 
     public static void RegisterServicesAndRepositories(this IServiceCollection services)
     {
-        services.AddScoped<IUserService, UserService>();
-        services.AddScoped<UserRepository>();
+        services.AddScoped<IUserService, UserService>().AddProblemDetails()
+            .AddExceptionHandler<GlobalExceptionHandler>();
+        services.AddScoped<IUserRepository, UserRepository>().AddProblemDetails()
+            .AddExceptionHandler<GlobalExceptionHandler>();
     }
 }

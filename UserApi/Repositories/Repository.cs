@@ -1,14 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using UserApi.Configs;
+using UserApi.Exceptions;
 
 namespace UserApi.Repositories;
 
-public class RepositoryBase<T> : IRepository<T> where T : class
+public class Repository<T> : IRepository<T> where T : class
 {
     private readonly AppDbContext _dbContext;
     private readonly DbSet<T> _dbSet;
 
-    protected RepositoryBase(AppDbContext dbContext)
+    protected Repository(AppDbContext dbContext)
     {
         _dbContext = dbContext;
         _dbSet = _dbContext.Set<T>();
@@ -29,13 +30,13 @@ public class RepositoryBase<T> : IRepository<T> where T : class
 
     public virtual async Task DeleteAsync(Guid id)
     {
-        var entity = await _dbSet.FindAsync(id) ?? throw new ArgumentNullException(nameof(T));
+        var entity = await GetByIdAsync(id);
         _dbSet.Remove(entity);
         await _dbContext.SaveChangesAsync();
     }
 
     public virtual async Task<T> GetByIdAsync(Guid id)
     {
-        return await _dbSet.FindAsync(id) ?? throw new ArgumentNullException(nameof(T));
+        return await _dbSet.FindAsync(id) ?? throw new EntityNotFoundException<T>();
     }
 }

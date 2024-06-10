@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using UserApi.Models;
 
-namespace UserApi.Services.UserService;
+namespace UserApi.Services.Implementations.UserService;
 
 public partial class UserService
 {

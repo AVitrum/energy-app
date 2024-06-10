@@ -1,20 +1,22 @@
 using System.Security.Claims;
+using UserApi.Exceptions;
 using UserApi.Models;
 using UserApi.Payload.Requests;
 using UserApi.Payload.Responses;
-using UserApi.Repositories;
+using UserApi.Repositories.Interfaces;
+using UserApi.Services.Interfaces;
 
-namespace UserApi.Services.UserService;
+namespace UserApi.Services.Implementations.UserService;
 
 public partial class UserService(
     IConfiguration configuration,
     IHttpContextAccessor httpContextAccessor,
-    UserRepository userRepository)
+    IUserRepository userRepository)
     : IUserService
 {
     public async Task RegisterAsync(RegistrationRequest request)
     {
-        GeneratePasswordHash(request.Password, out var passwordHash, out var passwordSalt);
+        UserService.GeneratePasswordHash(request.Password, out var passwordHash, out var passwordSalt);
 
         var newUser = new User
         {
@@ -31,13 +33,13 @@ public partial class UserService(
     {
         if (!await userRepository.UserExistsByUsernameAsync(request.Username))
         {
-            throw new ArgumentException(nameof(User));
+            throw new UserExistsByEmailException();
         }
 
         var user = await userRepository.GetByUsernameAsync(request.Username);
 
-        if (!IsPasswordHashEqual(request.Password, user.PasswordHash, user.PasswordSalt))
-            throw new ArgumentException("Password is incorrect");
+        if (!UserService.IsPasswordHashEqual(request.Password, user.PasswordHash, user.PasswordSalt))
+            throw new UserWrongPasswordException("Password is incorrect");
 
         return new LoginResponse
         {

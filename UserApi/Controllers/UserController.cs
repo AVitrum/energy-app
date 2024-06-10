@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserApi.Payload.Requests;
-using UserApi.Services.UserService;
+using UserApi.Services.Interfaces;
 
 namespace UserApi.Controllers
 {

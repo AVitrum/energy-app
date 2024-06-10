@@ -3,7 +3,7 @@ using UserApi.Payload.Requests;
 using UserApi.Payload.Responses;
 using LoginRequest = UserApi.Payload.Requests.LoginRequest;
 
-namespace UserApi.Services.UserService;
+namespace UserApi.Services.Interfaces;
 
 public interface IUserService
 {
